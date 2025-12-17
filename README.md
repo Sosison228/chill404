@@ -1,3 +1,6 @@
 # Страница 404
 Крутая страница с птичкой, анимациями и мелодией)
-<img width="1256" height="794" alt="bird" src="https://github.com/user-attachments/assets/1eedcee9-71dd-4438-8aeb-be2410e97a32" />
+<img width="1427" height="742" alt="image" src="https://github.com/user-attachments/assets/4153c27c-7c1f-4057-9ce7-27a6b7e96ffd" />
+Все сделано исключительно на HTML
+Живой фон реагирующий на мышь)
+Чтобы заиграла мелодия нужно кликнуть!
