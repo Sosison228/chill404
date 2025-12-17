@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    height: 100vh;
+    background: #0b0b0b;
+    overflow: hidden;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* фон */
+canvas {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+}
+
+/* сцена */
+.scene {
+    position: relative;
+    z-index: 2;
+    width: 900px;
+    max-width: 100%;
+    margin: auto;
+    text-align: center;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* вылет снизу */
+.fly {
+    opacity: 0;
+    transform: translateY(100vh);
+    animation: flyUp 1.2s cubic-bezier(.22,1,.36,1) forwards;
+}
+
+/* цифры */
+.code {
+    font-size: 320px;
+    font-weight: 800;
+    letter-spacing: -32px;
+    color: #fff;
+    line-height: 1;
+}
+
+/* птица */
+.bird {
+    position: absolute;
+    top: 52%;
+    left: 53%;
+    width: 500px;
+    transform: translate(-50%, calc(-50% + 100vh));
+    opacity: 0;
+    animation:
+        birdFly 1.2s cubic-bezier(.22,1,.36,1) forwards,
+        breathe 5s ease-in-out infinite;
+    animation-delay: 0.6s, 1.8s;
+    filter: drop-shadow(0 25px 60px rgba(0,0,0,.9));
+}
+
+/* текст */
+.text {
+    margin-top: 32px;
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: #fff;
+    line-height: 1.3;
+    animation-delay: 1.2s;
+}
+
+/* анимации */
+@keyframes flyUp {
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes birdFly {
+    to { transform: translate(-50%, -50%); opacity: 1; }
+}
+
+@keyframes breathe {
+    0%   { transform: translate(-50%, -50%) scale(1); }
+    50%  { transform: translate(-50%, -50%) scale(1.04); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* адаптив */
+@media (max-width: 768px) {
+    .code { font-size: 200px; letter-spacing: -18px; }
+    .bird { width: 220px; }
+    .text { font-size: 15px; }
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="stars"></canvas>
+
+<div class="scene">
+    <div class="code fly">404</div>
+
+    <img src="assets/bird.png" class="bird" alt="">
+
+    <div class="text fly">
+        СОМНЕВАЮСЬ, ЧТО ТАКАЯ<br>
+        СТРАНИЦА СУЩЕСТВУЕТ
+    </div>
+</div>
+
+<audio id="sound" src="assets/ambient.mp3" preload="auto"></audio>
+
+<script>
+/* ===== ЗВУК ===== */
+const audio = document.getElementById('sound');
+let soundPlayed = false;
+
+function playSound() {
+    if (!soundPlayed) {
+        audio.volume = 0.9;
+        audio.play().catch(() => {});
+        soundPlayed = true;
+    }
+}
+
+document.addEventListener('click', playSound);
+
+/* ===== ЗВЁЗДЫ ===== */
+const canvas = document.getElementById('stars');
+const ctx = canvas.getContext('2d');
+let w, h, stars, mouse = {x:0,y:0};
+
+function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+    stars = Array.from({length: 140}, () => ({
+        x: Math.random()*w,
+        y: Math.random()*h,
+        vx: (Math.random()-0.5)*0.3,
+        vy: (Math.random()-0.5)*0.3,
+        r: Math.random()*1.6 + 0.4
+    }));
+}
+resize();
+window.addEventListener('resize', resize);
+
+window.addEventListener('mousemove', e => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+});
+
+function draw() {
+    ctx.clearRect(0,0,w,h);
+
+    for (let s of stars) {
+        const dx = s.x - mouse.x;
+        const dy = s.y - mouse.y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+
+        if (dist < 120) {
+            s.x += dx * 0.01;
+            s.y += dy * 0.01;
+        }
+
+        s.x += s.vx;
+        s.y += s.vy;
+
+        if (s.x<0) s.x=w;
+        if (s.x>w) s.x=0;
+        if (s.y<0) s.y=h;
+        if (s.y>h) s.y=0;
+
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+        ctx.fill();
+    }
+    requestAnimationFrame(draw);
+}
+draw();
+</script>
+
+</body>
+</html>
